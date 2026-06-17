@@ -1,0 +1,24 @@
+// include specifies the files to include in the compilation
+// exclude specifies the files to exclude from the compilation
+// strict enables all strict type checking options
+// esModuleInterop allows you to use ES module syntax
+// moduleResolution specifies how modules are resolved
+// baseURL specifies the base directory for module resolution
+
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "target": "esnext",
+    "module": "esnext",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "strict": true,
+    "moduleResolution": "Node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "ignoreDeprecations": "6.0",
+    "types": ["node"]
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
+}
