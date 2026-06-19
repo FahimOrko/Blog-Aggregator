@@ -1,6 +1,6 @@
 import os from "node:os";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import type { Config } from "./types/config.js";
+import type { Config } from "../types/types.js";
 
 // --------------------------------------------------------
 // Get the user's home directory

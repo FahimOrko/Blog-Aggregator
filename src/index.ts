@@ -1,8 +1,8 @@
-import { initializeConfigFile } from "./config.js";
+import { initializeConfigFile } from "./config/config.js";
 import { argv } from "node:process";
 import { runCommand } from "./commands/commandRegistry.js";
 
-function main() {
+async function main() {
   console.log(initializeConfigFile());
 
   const commandName = argv[2];
@@ -12,7 +12,9 @@ function main() {
     throw new Error("No command provided.");
   }
 
-  runCommand(commandName, ...commandArgs);
+  await runCommand(commandName, ...commandArgs);
+
+  process.exit(0);
 }
 
 main();

@@ -1,5 +1,5 @@
 import { defineConfig } from "drizzle-kit";
-import { readConfig } from "./src/config.js";
+import { readConfig } from "./src/config/config.js";
 
 export default defineConfig({
   schema: "./src/db/schema.ts",

@@ -1,9 +1,12 @@
-import { handlerLogin } from "./commandHandler.js";
-import type { CommandHandler, CommandsRegistry } from "../types/config.js";
+import { handlerLogin, handlerRegister } from "./commandHandler.js";
+import type { CommandHandler, CommandsRegistry } from "../types/types.js";
 
-export function commandRegsitry(cmdName: string): CommandHandler {
+export async function commandRegsitry(
+  cmdName: string,
+): Promise<CommandHandler> {
   const commands: Record<string, CommandHandler> = {
-    login: handlerLogin,
+    login: await handlerLogin,
+    register: await handlerRegister,
   };
 
   if (!commands[cmdName]) {
@@ -19,7 +22,10 @@ export function commandRegsitry(cmdName: string): CommandHandler {
 //   handler: CommandHandler,
 // ): void {}
 
-export function runCommand(cmdName: string, ...args: string[]): void {
-  const handler = commandRegsitry(cmdName);
-  handler(cmdName, ...args);
+export async function runCommand(
+  cmdName: string,
+  ...args: string[]
+): Promise<void> {
+  const handler = await commandRegsitry(cmdName);
+  await handler(cmdName, ...args);
 }
