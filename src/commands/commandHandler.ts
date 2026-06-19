@@ -1,4 +1,8 @@
-import { createUser, getUser } from "../db/lib/queries/users.js";
+import {
+  createUser,
+  deleteAllUsers,
+  getUser,
+} from "../db/lib/queries/users.js";
 import { setUserInConfig } from "../config/config.js";
 
 // --------------------------------------------------------
@@ -23,6 +27,27 @@ export async function handlerLogin(
   }
 
   throw new Error(`User with name ${name} does not exist.`);
+}
+
+// --------------------------------------------------------
+// Handler for the "reset" command
+// --------------------------------------------------------
+export async function handlerReset(
+  cmdName: string,
+  ...args: string[]
+): Promise<void> {
+  if (args.length) {
+    throw new Error("Reset handler expected 0 argument, got " + args.length);
+  }
+
+  const reset = await deleteAllUsers();
+
+  if (reset) {
+    console.log(`All users successfully deleted from database.`);
+    return;
+  }
+
+  throw new Error(`Failed to delete all users.`);
 }
 
 // --------------------------------------------------------
