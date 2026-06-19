@@ -2,8 +2,9 @@ import {
   createUser,
   deleteAllUsers,
   getUser,
+  getAllUsers,
 } from "../db/lib/queries/users.js";
-import { setUserInConfig } from "../config/config.js";
+import { readConfig, setUserInConfig } from "../config/config.js";
 
 // --------------------------------------------------------
 // Handler for the "login" command
@@ -72,4 +73,33 @@ export async function handlerRegister(
   }
 
   throw new Error(`User with name ${name} already exists.`);
+}
+
+// --------------------------------------------------------
+// Handler for the "users" command
+// --------------------------------------------------------
+export async function handlerGetAllUsers(
+  cmdName: string,
+  ...args: string[]
+): Promise<void> {
+  if (args.length) {
+    throw new Error("Users handler expected 0 argument, got " + args.length);
+  }
+
+  const allUsers = await getAllUsers();
+
+  if (allUsers.length != 0) {
+    const currentUser = readConfig().currentUserName;
+    allUsers.forEach((user) => {
+      console.log(
+        `* ${user.name} ${user.name === currentUser ? "(current)" : ""}`,
+      );
+    });
+    return;
+  } else {
+    console.log(`No users found in database.`);
+    return;
+  }
+
+  throw new Error(`Error fetching users from database.`);
 }

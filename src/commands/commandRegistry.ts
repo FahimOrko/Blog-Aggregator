@@ -1,4 +1,5 @@
 import {
+  handlerGetAllUsers,
   handlerLogin,
   handlerRegister,
   handlerReset,
@@ -12,6 +13,7 @@ export async function commandRegsitry(
     login: handlerLogin,
     register: handlerRegister,
     reset: handlerReset,
+    users: handlerGetAllUsers,
   };
 
   if (!commands[cmdName]) {
