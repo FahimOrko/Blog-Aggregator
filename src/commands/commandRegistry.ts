@@ -1,4 +1,5 @@
 import {
+  handlerFetchRSS,
   handlerGetAllUsers,
   handlerLogin,
   handlerRegister,
@@ -14,6 +15,7 @@ export async function commandRegsitry(
     register: handlerRegister,
     reset: handlerReset,
     users: handlerGetAllUsers,
+    agg: handlerFetchRSS,
   };
 
   if (!commands[cmdName]) {
