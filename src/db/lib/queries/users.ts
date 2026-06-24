@@ -12,6 +12,11 @@ export async function getUser(name: string) {
   return row;
 }
 
+export async function getUserById(id: string) {
+  const [row] = await db.select().from(users).where(eq(users.id, id));
+  return row;
+}
+
 export async function getAllUsers() {
   const rows = await db.select().from(users);
   return rows;
