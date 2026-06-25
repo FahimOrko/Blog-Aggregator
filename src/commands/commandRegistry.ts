@@ -1,7 +1,9 @@
 import {
   handlerAddFeed,
   handlerFetchRSS,
+  handlerFollowFeed,
   handlerGetAllFeeds,
+  handlerGetAllUserFollowedFeeds,
   handlerGetAllUsers,
   handlerLogin,
   handlerRegister,
@@ -20,6 +22,8 @@ export async function commandRegsitry(
     agg: handlerFetchRSS,
     addfeed: handlerAddFeed,
     feeds: handlerGetAllFeeds,
+    follow: handlerFollowFeed,
+    following: handlerGetAllUserFollowedFeeds,
   };
 
   if (!commands[cmdName]) {

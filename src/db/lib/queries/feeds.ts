@@ -15,12 +15,12 @@ export async function getFeed(name: string) {
   return row;
 }
 
+export async function getFeedByUrl(url: string) {
+  const [row] = await db.select().from(feeds).where(eq(feeds.url, url));
+  return row;
+}
+
 export async function getAllFeeds() {
   const rows = await db.select().from(feeds);
   return rows;
 }
-
-// export async function deleteAllUsers() {
-//   await db.delete(users);
-//   return true;
-// }

@@ -5,11 +5,24 @@ import {
   getAllUsers,
   getUserById,
 } from "../db/lib/queries/users.js";
-import { readConfig, setUserInConfig } from "../config/config.js";
+import {
+  getCurrentUser,
+  readConfig,
+  setUserInConfig,
+} from "../config/config.js";
+import {
+  createFeed,
+  getAllFeeds,
+  getFeed,
+  getFeedByUrl,
+} from "../db/lib/queries/feeds.js";
 import { fetchFeed } from "./rss/commands.js";
-import { RSSFeed, RSSItem } from "src/types/types.js";
-import { createFeed, getAllFeeds } from "../db/lib/queries/feeds.js";
-import { printFeed } from "src/utils/common.js";
+import { RSSItem } from "../types/types.js";
+import { printFeed, printFollowedFeedDetails } from "../utils/common.js";
+import {
+  createFeedFollow,
+  getUserFollowedFeeds,
+} from "../db/lib/queries/feedFollows.js";
 
 // --------------------------------------------------------
 // Handler for the "login" command
@@ -196,11 +209,17 @@ export async function handlerAddFeed(
     throw new Error(`Failed to fetch user from database.`);
   }
 
+  const feed = await getFeed(name);
+
+  if (feed) throw new Error("Feed already exists");
+
   const feedFromDB = await createFeed(name, url, userFromDB.id);
 
   if (!feedFromDB) {
     throw new Error(`Failed to create feed in database.`);
   }
+
+  await createFeedFollow(userFromDB.id, feedFromDB.id);
 
   printFeed(feedFromDB, userFromDB);
 }
@@ -229,5 +248,61 @@ export async function handlerGetAllFeeds(
   }
 
   console.log(`No feeds found in database.`);
+  return;
+}
+
+// --------------------------------------------------------
+// Handler for the "follow" command
+// --------------------------------------------------------
+export async function handlerFollowFeed(
+  cmdName: string,
+  ...args: string[]
+): Promise<void> {
+  if (args.length === 0 || args.length > 1) {
+    throw new Error(
+      "Follow feed handler expected 1 argument, got " + args.length,
+    );
+  }
+
+  const currentUser = await getCurrentUser();
+  const currentUserId = currentUser.userId;
+  const url = args[0];
+
+  const feed = await getFeedByUrl(url);
+
+  if (!feed) throw new Error(`Couldn't find feed`);
+
+  const feedFollowed = await createFeedFollow(currentUserId, feed.id);
+
+  printFollowedFeedDetails(feedFollowed.feeds, feedFollowed.users);
+}
+
+// --------------------------------------------------------
+// Handler for the "following" command
+// --------------------------------------------------------
+export async function handlerGetAllUserFollowedFeeds(
+  cmdName: string,
+  ...args: string[]
+): Promise<void> {
+  if (args.length) {
+    throw new Error(
+      "Following handler expected 0 argument, got " + args.length,
+    );
+  }
+
+  const currentUser = await getCurrentUser();
+  const currentUserId = currentUser.userId;
+  const userFollowedFeeds = await getUserFollowedFeeds(currentUserId);
+
+  if (userFollowedFeeds.length != 0) {
+    for (const item of userFollowedFeeds) {
+      console.log(
+        `-------------------------------------\nFeed Name: ${item.feedName}\nUser Name: ${item.userName}\n-------------------------------------`,
+      );
+    }
+    return;
+  }
+
+  console.log(`No user followed feed found in database`);
   return;
 }

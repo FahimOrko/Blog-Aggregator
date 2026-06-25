@@ -15,6 +15,13 @@
       "when": 1782306836515,
       "tag": "0001_oval_wildside",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1782422310250,
+      "tag": "0002_serious_mandarin",
+      "breakpoints": true
     }
   ]
 }
