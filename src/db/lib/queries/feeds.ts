@@ -24,3 +24,11 @@ export async function getAllFeeds() {
   const rows = await db.select().from(feeds);
   return rows;
 }
+
+export async function updateFeed(id: string) {
+  const [row] = await db
+    .update(feeds)
+    .set({ lastFetchedAt: new Date(), updatedAt: new Date() })
+    .where(eq(feeds.id, id));
+  return row;
+}

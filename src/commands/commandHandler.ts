@@ -1,6 +1,8 @@
+import { feeds } from "src/db/schema.js";
 import { readConfig, setUserInConfig } from "../config/config.js";
 import {
   createFeedFollow,
+  deleteFeedFollow,
   getUserFollowedFeeds,
 } from "../db/lib/queries/feedFollows.js";
 import {
@@ -17,7 +19,11 @@ import {
   getUserById,
 } from "../db/lib/queries/users.js";
 import { CurrentUser, RSSItem } from "../types/types.js";
-import { printFeed, printFollowedFeedDetails } from "../utils/common.js";
+import {
+  printFeed,
+  printFollowedFeedDetails,
+  printUnfollowedFeedDetails,
+} from "../utils/common.js";
 import { fetchFeed } from "./rss/commands.js";
 
 // --------------------------------------------------------
@@ -257,7 +263,7 @@ export async function handlerFollowFeed(
 
   const feedFollowed = await createFeedFollow(user.userId, feed.id);
 
-  printFollowedFeedDetails(feedFollowed.feeds, feedFollowed.users);
+  printFollowedFeedDetails(feedFollowed.feeds, user);
 }
 
 // --------------------------------------------------------
@@ -287,4 +293,28 @@ export async function handlerGetAllUserFollowedFeeds(
 
   console.log(`No user followed feed found in database`);
   return;
+}
+
+// --------------------------------------------------------
+// Handler for the "unfollow" command
+// --------------------------------------------------------
+export async function handlerUnfollowFeed(
+  cmdName: string,
+  user: CurrentUser,
+  ...args: string[]
+): Promise<void> {
+  if (args.length === 0 || args.length > 1) {
+    throw new Error(
+      "Follow feed handler expected 1 argument, got " + args.length,
+    );
+  }
+  const url = args[0];
+
+  const feed = await getFeedByUrl(url);
+
+  if (!feed) throw new Error(`Couldn't find feed`);
+
+  await deleteFeedFollow(user.userId, feed.id);
+
+  printUnfollowedFeedDetails(feed, user);
 }

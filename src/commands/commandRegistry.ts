@@ -10,6 +10,7 @@ import {
   handlerLogin,
   handlerRegister,
   handlerReset,
+  handlerUnfollowFeed,
 } from "./commandHandler.js";
 
 export async function commandRegsitry(
@@ -24,6 +25,7 @@ export async function commandRegsitry(
     feeds: handlerGetAllFeeds,
     addfeed: middlewareLoggedIn(handlerAddFeed),
     follow: middlewareLoggedIn(handlerFollowFeed),
+    unfollow: middlewareLoggedIn(handlerUnfollowFeed),
     following: middlewareLoggedIn(handlerGetAllUserFollowedFeeds),
   };
 

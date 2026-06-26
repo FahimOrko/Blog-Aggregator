@@ -10,10 +10,21 @@ export function printFeed(feed: Feed, user: CurrentUser): void {
   console.log("------------------------------------");
 }
 
-export function printFollowedFeedDetails(feed: Feed, user: User): void {
+export function printFollowedFeedDetails(feed: Feed, user: CurrentUser): void {
   console.log("------------------------------------");
   console.log("User Followed Feed");
-  console.log(`User Name: ${user.name}`);
+  console.log(`User Name: ${user.userName}`);
+  console.log(`Feed Name: ${feed.name}`);
+  console.log("------------------------------------");
+}
+
+export function printUnfollowedFeedDetails(
+  feed: Feed,
+  user: CurrentUser,
+): void {
+  console.log("------------------------------------");
+  console.log("User Followed Feed");
+  console.log(`User Name: ${user.userName}`);
   console.log(`Feed Name: ${feed.name}`);
   console.log("------------------------------------");
 }
