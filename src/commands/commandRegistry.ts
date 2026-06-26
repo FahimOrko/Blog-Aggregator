@@ -1,3 +1,5 @@
+import { middlewareLoggedIn } from "../middleware/middleware.js";
+import type { CommandHandler } from "../types/types.js";
 import {
   handlerAddFeed,
   handlerFetchRSS,
@@ -9,8 +11,6 @@ import {
   handlerRegister,
   handlerReset,
 } from "./commandHandler.js";
-import type { CommandHandler, CommandsRegistry } from "../types/types.js";
-import { middlewareLoggedIn } from "../middleware/middleware.js";
 
 export async function commandRegsitry(
   cmdName: string,

@@ -1,8 +1,8 @@
-import os from "node:os";
 import dotenv from "dotenv";
-import type { Config } from "../types/types.js";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import os from "node:os";
 import { getUser } from "../db/lib/queries/users.js";
+import type { Config } from "../types/types.js";
 
 dotenv.config();
 

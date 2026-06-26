@@ -1,28 +1,24 @@
+import { readConfig, setUserInConfig } from "../config/config.js";
 import {
-  createUser,
-  deleteAllUsers,
-  getUser,
-  getAllUsers,
-  getUserById,
-} from "../db/lib/queries/users.js";
-import {
-  getCurrentUser,
-  readConfig,
-  setUserInConfig,
-} from "../config/config.js";
+  createFeedFollow,
+  getUserFollowedFeeds,
+} from "../db/lib/queries/feedFollows.js";
 import {
   createFeed,
   getAllFeeds,
   getFeed,
   getFeedByUrl,
 } from "../db/lib/queries/feeds.js";
-import { fetchFeed } from "./rss/commands.js";
+import {
+  createUser,
+  deleteAllUsers,
+  getAllUsers,
+  getUser,
+  getUserById,
+} from "../db/lib/queries/users.js";
 import { CurrentUser, RSSItem } from "../types/types.js";
 import { printFeed, printFollowedFeedDetails } from "../utils/common.js";
-import {
-  createFeedFollow,
-  getUserFollowedFeeds,
-} from "../db/lib/queries/feedFollows.js";
+import { fetchFeed } from "./rss/commands.js";
 
 // --------------------------------------------------------
 // Handler for the "login" command
@@ -85,7 +81,7 @@ export async function handlerRegister(
 
   if (!checkUser) {
     const newUser = await createUser(name);
-    console.log(`New user succefully created at database:`, newUser.name);
+    console.log(`New user successfully created at database:`, newUser.name);
     await handlerLogin(cmdName, name);
     return;
   }
