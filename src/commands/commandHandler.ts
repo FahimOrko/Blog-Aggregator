@@ -17,7 +17,7 @@ import {
   getFeedByUrl,
 } from "../db/lib/queries/feeds.js";
 import { fetchFeed } from "./rss/commands.js";
-import { RSSItem } from "../types/types.js";
+import { CurrentUser, RSSItem } from "../types/types.js";
 import { printFeed, printFollowedFeedDetails } from "../utils/common.js";
 import {
   createFeedFollow,
@@ -183,48 +183,6 @@ export async function handlerFetchRSS(
 }
 
 // --------------------------------------------------------
-// Handler for the "addfeed" command
-// --------------------------------------------------------
-export async function handlerAddFeed(
-  cmdName: string,
-  ...args: string[]
-): Promise<void> {
-  if (args.length === 0 || args.length === 1 || args.length > 2) {
-    throw new Error("Add Feed handler expected 2 argument, got " + args.length);
-  }
-
-  const name = args[0];
-  const url = args[1];
-  const user = readConfig().currentUserName;
-
-  // console.log(`Adding feed with name: ${name}, url: ${url}, for user: ${user}`);
-
-  if (!user || user === "") {
-    throw new Error(`No user logged in. Please log in first.`);
-  }
-
-  const userFromDB = await getUser(user);
-
-  if (!userFromDB) {
-    throw new Error(`Failed to fetch user from database.`);
-  }
-
-  const feed = await getFeed(name);
-
-  if (feed) throw new Error("Feed already exists");
-
-  const feedFromDB = await createFeed(name, url, userFromDB.id);
-
-  if (!feedFromDB) {
-    throw new Error(`Failed to create feed in database.`);
-  }
-
-  await createFeedFollow(userFromDB.id, feedFromDB.id);
-
-  printFeed(feedFromDB, userFromDB);
-}
-
-// --------------------------------------------------------
 // Handler for the "feeds" command
 // --------------------------------------------------------
 export async function handlerGetAllFeeds(
@@ -252,10 +210,41 @@ export async function handlerGetAllFeeds(
 }
 
 // --------------------------------------------------------
+// Handler for the "addfeed" command
+// --------------------------------------------------------
+export async function handlerAddFeed(
+  cmdName: string,
+  user: CurrentUser,
+  ...args: string[]
+): Promise<void> {
+  if (args.length === 0 || args.length === 1 || args.length > 2) {
+    throw new Error("Add Feed handler expected 2 argument, got " + args.length);
+  }
+
+  const name = args[0];
+  const url = args[1];
+
+  const feed = await getFeed(name);
+
+  if (feed) throw new Error("Feed already exists");
+
+  const feedFromDB = await createFeed(name, url, user.userId);
+
+  if (!feedFromDB) {
+    throw new Error(`Failed to create feed in database.`);
+  }
+
+  await createFeedFollow(user.userId, feedFromDB.id);
+
+  printFeed(feedFromDB, user);
+}
+
+// --------------------------------------------------------
 // Handler for the "follow" command
 // --------------------------------------------------------
 export async function handlerFollowFeed(
   cmdName: string,
+  user: CurrentUser,
   ...args: string[]
 ): Promise<void> {
   if (args.length === 0 || args.length > 1) {
@@ -264,15 +253,13 @@ export async function handlerFollowFeed(
     );
   }
 
-  const currentUser = await getCurrentUser();
-  const currentUserId = currentUser.userId;
   const url = args[0];
 
   const feed = await getFeedByUrl(url);
 
   if (!feed) throw new Error(`Couldn't find feed`);
 
-  const feedFollowed = await createFeedFollow(currentUserId, feed.id);
+  const feedFollowed = await createFeedFollow(user.userId, feed.id);
 
   printFollowedFeedDetails(feedFollowed.feeds, feedFollowed.users);
 }
@@ -282,6 +269,7 @@ export async function handlerFollowFeed(
 // --------------------------------------------------------
 export async function handlerGetAllUserFollowedFeeds(
   cmdName: string,
+  user: CurrentUser,
   ...args: string[]
 ): Promise<void> {
   if (args.length) {
@@ -290,9 +278,7 @@ export async function handlerGetAllUserFollowedFeeds(
     );
   }
 
-  const currentUser = await getCurrentUser();
-  const currentUserId = currentUser.userId;
-  const userFollowedFeeds = await getUserFollowedFeeds(currentUserId);
+  const userFollowedFeeds = await getUserFollowedFeeds(user.userId);
 
   if (userFollowedFeeds.length != 0) {
     for (const item of userFollowedFeeds) {

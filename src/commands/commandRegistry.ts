@@ -10,6 +10,7 @@ import {
   handlerReset,
 } from "./commandHandler.js";
 import type { CommandHandler, CommandsRegistry } from "../types/types.js";
+import { middlewareLoggedIn } from "../middleware/middleware.js";
 
 export async function commandRegsitry(
   cmdName: string,
@@ -20,10 +21,10 @@ export async function commandRegsitry(
     reset: handlerReset,
     users: handlerGetAllUsers,
     agg: handlerFetchRSS,
-    addfeed: handlerAddFeed,
     feeds: handlerGetAllFeeds,
-    follow: handlerFollowFeed,
-    following: handlerGetAllUserFollowedFeeds,
+    addfeed: middlewareLoggedIn(handlerAddFeed),
+    follow: middlewareLoggedIn(handlerFollowFeed),
+    following: middlewareLoggedIn(handlerGetAllUserFollowedFeeds),
   };
 
   if (!commands[cmdName]) {

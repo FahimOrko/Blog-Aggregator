@@ -18,6 +18,17 @@ export type CommandHandler = (
   ...args: string[]
 ) => Promise<void>;
 
+export type UserCommandHandler = (
+  cmdName: string,
+  user: CurrentUser,
+  ...args: string[]
+) => Promise<void>;
+
+export type CurrentUser = {
+  userName: string;
+  userId: string;
+};
+
 export type CommandsRegistry = (cmdName: string) => CommandHandler;
 
 // --------------------------------------------------------
