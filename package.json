@@ -11,10 +11,10 @@
     "generate": "drizzle-kit generate",
     "migrate": "drizzle-kit migrate"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["rss", "feed-aggregator", "blog", "typescript"],
+  "author": "FahimOrko",
   "license": "ISC",
-  "description": "",
+  "description": "A TypeScript-based RSS feed aggregator that fetches and manages blog content from multiple sources into a PostgreSQL database",
   "devDependencies": {
     "@types/node": "^25.9.1",
     "drizzle-kit": "^0.31.10",
